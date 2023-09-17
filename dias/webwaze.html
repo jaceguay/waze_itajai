@@ -13,22 +13,30 @@
             height: 100%;
             margin: 0;
             overflow: hidden;
-            /* This will hide any potential overflow, but if sized correctly, it shouldn't be needed */
             font-family: Arial, sans-serif;
         }
 
         #top-bar {
-            background-color: #f4f4f4;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            box-sizing: border-box;
-            /* Include padding in the height calculation */
+            display: flex;
+            justify-content: center;
+        }
+
+        #top-bar-text {
+            display: flex;
+            justify-content: center;
+            /* centraliza horizontalmente */
+            align-items: center;
+            /* centraliza verticalmente */
+            height: 100%;
+        }
+
+        .logos-container {
+            display: flex;
+            margin-right: 10px;
         }
 
         #mapa {
             height: calc(60% - 60px);
-            /* Adjusted for the #top-bar padding and #botoes height */
             width: 100%;
         }
 
@@ -55,13 +63,11 @@
 
         #grafico {
             height: calc(40% - 60px);
-            /* Adjusted for the #botoes padding */
             width: 100%;
         }
 
         #grafico canvas {
             height: 250px !important;
-            /* Definindo uma altura explícita */
             width: 100% !important;
         }
 
@@ -88,7 +94,16 @@
 
 <body>
 
-    <div id="top-bar">Carregando...</div>
+    <div id="top-bar">
+        <div class="logos-container">
+            <img src="images/favicon-32x32.png" alt="Logo 1" style="height:auto; width:auto; padding:3px;" />
+            <img src="images/waze_for_cities_brand.png" alt="Logo 2" style="height:25px; padding:3px;" />
+        </div>
+        <div id="top-bar-text">
+            Carregando...
+        </div>
+    </div>
+
     <div id="mapa"></div>
     <div id="botoes">
         <button onclick="carregarDados(2020)">2020</button>
@@ -114,14 +129,14 @@
 
 
     <script>
-        let currentYear = 2020;       // Start with a default year
-        let currentIndex = null;     // Index of the currently selected data in the graph, null as default
+        let currentYear = 2020;       // Ano padrão
+        let currentIndex = null;     // Indíce dos dados no gráfico
         let datas = [];
 
         const mapa = new L.Map('mapa', {
             zoom: 14,
             minZoom: 12,
-            maxZoom: 17,
+            maxZoom: 16,
             maxBounds: [
                 [-27.3000, -49.2300],
                 [-26.3285, -48.3200]
@@ -211,7 +226,7 @@
 
         mapa.addControl(new HeatmapControl());
 
-        // Styling functions
+        // Estilo pontos da camada de hora
         function getColorFromSpeed(speedKMH) {
             if (speedKMH <= 10) return 'rgba(102, 20, 0, 0.5)';
             if (speedKMH <= 15) return 'rgba(179, 36, 0, 0.5)';
@@ -225,9 +240,9 @@
             return {
                 fillColor: getColorFromSpeed(feature.properties.speedKMH),
                 fillOpacity: 0.75,
-                color: "none",  // no border
-                weight: 0,      // ensure no border
-                radius: 20
+                color: "none",
+                weight: 0,
+                radius: 14
             };
         }
 
@@ -298,22 +313,45 @@
 
         function navigateData(direction) {
             if (currentIndex !== null) {
-                if (direction === "right") {
-                    currentIndex++;
-                } else if (direction === "left") {
-                    currentIndex--;
+                let newIndex = currentIndex; // Use a temporary variable
+
+                if (direction === "right" && currentIndex < datas.length - 1) { // Check if not at the end
+                    newIndex++;
+                } else if (direction === "left" && currentIndex > 0) { // Check if not at the beginning
+                    newIndex--;
                 }
 
-                // Make sure the index is within the range
-                currentIndex = Math.min(Math.max(currentIndex, 0), datas.length - 1);
-
-                const dataSelecionada = datas[currentIndex];
-                carregarGeoJSON(currentYear, dataSelecionada);
+                // Only update if the index changed
+                if (newIndex !== currentIndex) {
+                    currentIndex = newIndex;
+                    const dataSelecionada = datas[currentIndex];
+                    carregarGeoJSON(currentYear, dataSelecionada);
+                    updateChartSelection();
+                }
             }
         }
 
+        function updateChartSelection() {
+            // Reset all points
+            for (let i = 0; i < grafico.data.datasets[0].data.length; i++) {
+                grafico.data.datasets[0].pointBackgroundColor[i] = 'blue';
+            }
+
+            // Highlight the selected point
+            grafico.data.datasets[0].pointBackgroundColor[currentIndex] = 'red';
+            grafico.update();
+        }
+
+        function getDayName(dateString) {
+            const days = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"];
+            const date = new Date(dateString);
+            return days[date.getDay()];
+        }
+
         function carregarGeoJSON(ano, data) {
-            document.getElementById("top-bar").innerText = `Dados de ${data}`;
+            const dayName = getDayName(data);
+            document.getElementById("top-bar-text").innerText = `Dados de ${data} (${dayName})`;
+
 
             // Resetando o slider e a label
             document.getElementById('horaSlider').value = 0;
@@ -350,7 +388,7 @@
                         mapa.removeLayer(heatmapLayer);
                     }
                     // Adiciona o novo mapa de calor
-                    heatmapLayer = L.heatLayer(heatData, { radius: 35, blur: 20, minOpacity: 0.2, pane: 'heatmapPane', }).addTo(mapa);
+                    heatmapLayer = L.heatLayer(heatData, { radius: 15, blur: 20, minOpacity: 0.1, maxZoom: 16 }).addTo(mapa);
 
                 }
             });
@@ -391,8 +429,17 @@
             toggleHeatmap(false);
         }
 
+        document.addEventListener('keydown', function (event) {
+            if (event.keyCode == 37) {  // Tecla esquerda
+                navigateData('left');
+            } else if (event.keyCode == 39) {  // Tecla direita
+                navigateData('right');
+            }
+        });
 
-        // Carregar dados padrão e dados GeoJSON
+
+
+        // Carregar dados
         carregarDados(2021);
         carregarGeoJSON(2021, '2021-01-01');
 
