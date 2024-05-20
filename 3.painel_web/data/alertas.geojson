@@ -1,0 +1,33 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.680689, -26.885033 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.693589, -26.857662 ] } },
+{ "type": "Feature", "properties": { "type": "ACCIDENT" }, "geometry": { "type": "Point", "coordinates": [ -48.715561, -26.904194 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.633438, -27.00303 ] } },
+{ "type": "Feature", "properties": { "type": "ACCIDENT" }, "geometry": { "type": "Point", "coordinates": [ -48.684166, -26.819873 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.711425, -26.914141 ] } },
+{ "type": "Feature", "properties": { "type": "ACCIDENT" }, "geometry": { "type": "Point", "coordinates": [ -48.611043, -27.01715 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.82398, -26.895623 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.726383, -26.852239 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.691445, -26.827159 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.690842, -26.826417 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.715778, -26.903767 ] } },
+{ "type": "Feature", "properties": { "type": "ACCIDENT" }, "geometry": { "type": "Point", "coordinates": [ -48.680685, -26.960064 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.713924, -26.908108 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.659436, -26.909815 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.690705, -26.908103 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.670827, -26.983666 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.714137, -26.907595 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.68037, -26.910103 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.661454, -26.992205 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.664408, -26.988831 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.623874, -27.005846 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.623728, -27.00589 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.681211, -26.949275 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.600129, -27.052443 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.597495, -27.074657 ] } },
+{ "type": "Feature", "properties": { "type": "WEATHERHAZARD" }, "geometry": { "type": "Point", "coordinates": [ -48.656586, -26.914986 ] } }
+]
+}

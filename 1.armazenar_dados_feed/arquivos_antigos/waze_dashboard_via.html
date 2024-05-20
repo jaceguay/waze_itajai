@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard, WAZE, Itajaí - SC</title>
+    <link rel="icon" type="image/png" href="html_imgs/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="html_imgs/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="html_imgs/favicon-32x32.png" sizes="32x32">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link href="js_libs/tabulator_simple.min.css" rel="stylesheet">
+    <script src="js_libs/jquery-3.6.0.min.js"></script>
+    <script src="js_libs/chart.js"></script>
+    <script type="text/javascript" src="js_libs/tabulator.min.js"></script>
+
+    <style>
+        :root {
+            --base: #00bcd4;
+            --escuro: #333;
+            --claro: white;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        .flex-container0 {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flex-container1 {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flex-containerA {
+            display: flex;
+            flex: 2;
+            flex-direction: column;
+            height: 100%;
+            width: 33.33%;
+        }
+
+        .flex-containerB {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            height: 100%;
+            width: 20%;
+        }
+
+        .flex-containerA1 {
+            flex: 1;
+            height: 50%;
+            width: 100%;
+        }
+
+        #brasarea {
+            height: 2.5em;
+            display: flex;
+            background: var(--base);
+            color: var(--claro);
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .media {
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            font-size: small;
+            color: #595959;
+        }
+
+        .leaflet-container {
+            background: white;
+        }
+
+        /* Linha horizontal */
+        hr.bordaBranca {
+            border: 2px solid white;
+            border-radius: 1px;
+        }
+
+        /* Legenda */
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        /* Menu drowpdown */
+        .dropbtn {
+            background-color: var(--claro);
+            color: var(--escuro);
+            padding: 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 0;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--escuro);
+            min-width: 400px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: var(--claro);
+            padding: 10px 12px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #737373;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: var(--base);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class='flex-container0'>
+        <div id='brasarea'>
+            <span style='vertical-align: middle;'>
+                <div class="dropdown">
+                    <button class="dropbtn">≡ 3.Painel via - atualização diária</button>
+                    <div class="dropdown-content">
+                        <a href="http://geo-smu/waze/waze_dashboard_dia.html">- 1.Painel dia/semana - atualização cada
+                            hora</a>
+                        <a href="http://geo-smu/waze/waze_dashboard_mes.html">- 2.Painel mês - atualização diária</a>
+                    </div>
+                </div>
+                <img src='html_imgs/favicon-32x32.png' style='vertical-align: top; height: 25px; padding:3px;'>
+                <span style="font-size:12px">Muncípio de Itajaí</span> |
+                <img src='html_imgs/waze_for_cities_brand.png' style='vertical-align: top; height: 23px; padding:5px;'>
+                <span style="font-size:9px">Data by Waze App. Learn more at Waze.com</span>
+            </span>
+        </div>
+        <div class='flex-container1'>
+            <div class='flex-containerA'>
+                <div class='flex-containerA1'>
+                    <canvas id="AAc" class='canvas'></canvas>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="ABc" class='canvas'></canvas>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="ACc" class='canvas'></canvas>
+                </div>
+            </div>
+            <div class='flex-containerA'>
+                <div class='flex-containerA1'>
+                    <canvas id="BAc" class='canvas'></canvas>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="BBc" class='canvas'></canvas>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="BCc" class='canvas'></canvas>
+                </div>
+            </div>
+            <div class='flex-containerA'>
+                <div class='flex-containerA1'>
+                    <canvas id="CAc" class='canvas'></canvas>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="CBc" class='canvas'></canvas>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="CCc" class='canvas'></canvas>
+                </div>
+            </div>
+            <div class='flex-containerB'>
+                <div id="tabela_vias"> </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        let AAc;
+        let ABc;
+        let ACc;
+        let BAc;
+        let BBc;
+        let BCc;
+        let CAc;
+        let CBc;
+        let CCc;
+
+        const cells = document.querySelectorAll(".canvas");
+        let div_graficos = [];
+        let ultimo_clique = 0;
+
+        function handleClick(e) {
+            cells.forEach(cell => cell.style.backgroundColor = "white");
+            document.getElementById(e.path[0].id).style.backgroundColor = "#f2f2f2";
+            ultimo_clique = div_graficos.indexOf(e.path[0].id);
+        };
+
+        cells.forEach(cell => {
+            cell.addEventListener("click", handleClick);
+            div_graficos.push(cell.id);
+        });
+
+        let tabela = new Tabulator('#tabela_vias', {
+            locale: 'pt-br',
+            langs: {
+                "pt-br": {
+                    "columns": {
+                        "name": "Nome",
+                    },
+                    "ajax": {
+                        "loading": "Carregando",
+                        "error": "Erro",
+                    },
+                    "groups": {
+                        "item": "item",
+                        "items": "registros",
+                    },
+                    "pagination": {
+                        "page_size": "Tamanho da página",
+                        "first": "Primeira",
+                        "first_title": "Próxima página",
+                        "last": "Última",
+                        "last_title": "Última página",
+                        "prev": "Anterior",
+                        "prev_title": "Página anterior",
+                        "next": "Próxima",
+                        "next_title": "Próxima página",
+                    },
+                    "headerFilters": {
+                        "default": "filtrar...",
+                        "columns": {
+                            "name": "filtrar...",
+                        }
+                    }
+                }
+            },
+            height: '100%',
+            layout: 'fitColumns',
+            headerSort: false,
+            rowClick: function (e, row) {
+                console.log(div_graficos[ultimo_clique])
+                atualiza_graf(row._row.data.valores,
+                    row._row.data.label_data,
+                    row._row.data.nome,
+                    div_graficos[ultimo_clique])
+            },
+            columns: [
+                { title: 'nome', field: 'nome', width: 200, headerFilter: "input" },
+                { title: 'total', field: 'total' },
+                { title: 'valores', field: 'valores', visible: false },
+                { title: 'label_data', field: 'label_data', visible: false }
+            ]
+        });
+
+        //função atualizar gráficos
+        let atualiza_graf = (dataset, label_dados, titulo, nomecanva) => {
+
+            max = Math.max(...dataset) + 6000
+            min = Math.min(...dataset) - 6000
+
+            const data = {
+                labels: label_dados,
+                datasets: [
+                    {
+                        label: titulo,
+                        data: dataset,
+                        borderColor: '#0033cc',
+                        backgroundColor: '#e6ecff'
+                    }
+                ]
+            };
+
+            eval(nomecanva).options = {
+                scales: {
+                    y: {
+                        min: min,
+                        max: max,
+                        display: false,
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            };
+
+            eval(nomecanva).config.data = data;
+            eval(nomecanva).update();
+        };
+
+        let inicalizar_tabela = (item) => {
+            let datasets = [];
+            label_data = [];
+
+            $.ajax({
+                type: "GET",
+                url: "dados_exportados/progressao_vias.tsv",
+                dataType: "text",
+                success: (prog_mes) => {
+
+                    let prog_m = prog_mes.split('\n');
+
+                    label_base = prog_m[0].split('\t').slice(1, -1)
+
+                    for (let i = 0; i < label_base.length; i++) {
+                        label_data.push(label_base[i].substring(5))
+                    };
+
+                    for (let i = 0; i < prog_m.length; i++) {
+                        y = prog_m[i].split('\t');
+
+                        if (y[0] != 'nome' && y[0].length != 0) {
+
+                            nome_l = y.shift();
+
+                            total_l = y.pop();
+
+                            datasets.push({
+                                id: i,
+                                nome: nome_l,
+                                valores: y,
+                                total: total_l,
+                                label_data: label_data
+                            });
+                        };
+                    };
+
+                    tabela.setData(datasets);
+                    tabela.setSort("total", "desc");
+                    dados_iniciais = tabela.rowManager.activeRows.slice(0, 9);
+
+                    graficos_iniciais = [];
+
+                    for (let i = 0; i < dados_iniciais.length; i++) {
+                        graficos_iniciais.push({
+                            max: Math.max(...dados_iniciais[i].data.valores) + 6000,
+                            min: Math.min(...dados_iniciais[i].data.valores) - 6000,
+                            data: {
+                                labels: dados_iniciais[i].data.label_data,
+                                datasets: [
+                                    {
+                                        label: dados_iniciais[i].data.nome,
+                                        data: dados_iniciais[i].data.valores,
+                                        borderColor: '#0033cc',
+                                        backgroundColor: '#e6ecff'
+                                    }
+                                ]
+                            }
+                        });
+                    };
+
+                    AAc = new Chart(document.getElementById('AAc'), {
+                        type: 'line',
+                        data: graficos_iniciais[0].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[0].min,
+                                    max: graficos_iniciais[0].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    ABc = new Chart(document.getElementById('ABc'), {
+                        type: 'line',
+                        data: graficos_iniciais[1].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[1].min,
+                                    max: graficos_iniciais[1].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    ACc = new Chart(document.getElementById('ACc'), {
+                        type: 'line',
+                        data: graficos_iniciais[2].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[2].min,
+                                    max: graficos_iniciais[2].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    BAc = new Chart(document.getElementById('BAc'), {
+                        type: 'line',
+                        data: graficos_iniciais[3].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[3].min,
+                                    max: graficos_iniciais[3].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    BBc = new Chart(document.getElementById('BBc'), {
+                        type: 'line',
+                        data: graficos_iniciais[4].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[4].min,
+                                    max: graficos_iniciais[4].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    BCc = new Chart(document.getElementById('BCc'), {
+                        type: 'line',
+                        data: graficos_iniciais[5].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[5].min,
+                                    max: graficos_iniciais[5].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    CAc = new Chart(document.getElementById('CAc'), {
+                        type: 'line',
+                        data: graficos_iniciais[6].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[6].min,
+                                    max: graficos_iniciais[6].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    CBc = new Chart(document.getElementById('CBc'), {
+                        type: 'line',
+                        data: graficos_iniciais[7].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[7].min,
+                                    max: graficos_iniciais[7].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    CCc = new Chart(document.getElementById('CCc'), {
+                        type: 'line',
+                        data: graficos_iniciais[8].data,
+                        options: {
+                            responsive: true,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            stacked: false,
+                            plugins: {
+                                title: {
+                                    display: false
+                                }
+                            },
+                            elements: {
+                                line: {
+                                    tension: .2
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: graficos_iniciais[8].min,
+                                    max: graficos_iniciais[8].max,
+                                    display: false,
+                                    grid: {
+                                        drawOnChartArea: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                }
+            });
+        };
+
+        inicalizar_tabela();
+    </script>
+</body>
+
+</html>

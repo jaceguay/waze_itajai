@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard, WAZE, Itajaí - SC</title>
+    <link rel="icon" type="image/png" href="images/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="js_libs/leaflet.css" />
+    <link href="js_libs/tabulator_simple.min.css" rel="stylesheet">
+    <script src="js_libs/leaflet.js"></script>
+    <script src="js_libs/jquery-3.6.0.min.js"></script>
+    <script src="js_libs/chart.js"></script>
+    <script type="text/javascript" src="js_libs/tabulator.min.js"></script>
+
+    <style>
+        :root {
+            --base: #00bcd4;
+            --escuro: #333;
+            --claro: white;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        .flex-container0 {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flex-container1 {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flex-containerA {
+            display: flex;
+            flex: 2;
+            flex-direction: column;
+            height: 100%;
+            width: 33.33%;
+        }
+
+        .flex-containerA1 {
+            flex: 1;
+            height: 50%;
+            width: 100%;
+        }
+
+        .flex-containerB {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            height: 100%;
+            width: 33.33%;
+        }
+
+        .flex-containerB1 {
+            flex: 1;
+            height: 50%;
+            width: 100%;
+        }
+
+        .flex-containerC {
+            flex: 2;
+            height: 100%;
+            width: 33.33%;
+        }
+
+        #brasarea {
+            height: 2.5em;
+            display: flex;
+            background: var(--base);
+            color: var(--claro);
+            text-shadow: 1px 1px 2px black;
+        }
+
+        #mapa {
+            background-color: gray;
+            height: 96%;
+            width: 100%;
+        }
+
+        .leaflet-container {
+            background: white;
+        }
+
+        /* Linha horizontal */
+        hr.bordaBranca {
+            border: 2px solid white;
+            border-radius: 1px;
+        }
+
+        /* Legenda */
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        /* Menu drowpdown */
+        .dropbtn {
+            background-color: var(--claro);
+            color: var(--escuro);
+            padding: 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 0;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--escuro);
+            min-width: 400px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            */ z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: var(--claro);
+            padding: 10px 12px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #737373;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: var(--base);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class='flex-container0'>
+        <div id='brasarea'>
+            <span style='vertical-align: middle;'>
+                <div class="dropdown">
+                    <button class="dropbtn">≡ 1.Painel dia/semana - atualização cada hora</button>
+                    <div class="dropdown-content">
+                        <a href="http://geo-smu/waze/waze_dashboard_mes.html">- 2.Painel mês - atualização diária</a>
+                        <a href="http://geo-smu/waze/waze_dashboard_via.html">- 3.Painel via - atualização diária</a>
+                    </div>
+                </div>
+                <img src='html_imgs/favicon-32x32.png' style='vertical-align: top; height: 25px; padding:3px;'>
+                <span style="font-size:12px">Muncípio de Itajaí</span> |
+                <img src='html_imgs/waze_for_cities_brand.png' style='vertical-align: top; height: 23px; padding:5px;'>
+                <span style="font-size:9px">Data by Waze App. Learn more at Waze.com</span>
+            </span>
+        </div>
+        <div class='flex-container1'>
+            <div class='flex-containerA'>
+                <div class='flex-containerA1'>
+                    <canvas id="prog_dia_semana_canvas"></canvas>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="prog_dia_canvas"></canvas>
+                </div>
+            </div>
+            <div class='flex-containerB'>
+                <div class='flex-containerB1'>
+                    <div id="tabela_vias"> </div>
+                </div>
+                <div class='flex-containerB1'>
+                    <hr class='bordaBranca'>
+                    <div id="tabela_bairros"> </div>
+                </div>
+            </div>
+            <div class='flex-containerC'>
+                <!-- <iframe src="https://embed.waze.com/iframe?zoom=13&lat=-26.9046&lon=-48.6874" width="100%"
+                    height="820"></iframe> -->
+                <div id='mapa'>mapa</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        //#div do mapa
+        let mapa = new L.Map('mapa', {
+            zoom: 13,
+            minZoom: 13,
+            maxZoom: 13,
+            maxBounds: [
+                //south west
+                [-27.3000, -49.2300],
+                //north east
+                [-26.3285, -48.3200]
+            ],
+            center: new L.latLng([-26.9046, -48.6874]),
+            zoomControl: false,
+            preferCanvas: true
+        });
+
+        //Mapa base, OSM
+        let tileosm = new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            minZoom: 12,
+            maxZoom: 19,
+            opacity: 0.6,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(mapa);
+
+        //barra escala
+        L.control.scale({
+            position: "bottomright",
+            imperial: false
+        }).addTo(mapa);
+
+        //Norte
+        let nortemapa = L.control({
+            position: 'bottomright'
+        });
+        nortemapa.onAdd = function (map) {
+            let div = L.DomUtil.create('div', 'info2 legend');
+            div.innerHTML +=
+                '<center><sub><font size="4">▲</font></sub><br/>' +
+                '<sup><font size="2">N</font></sup></center>'
+            return div;
+        };
+        nortemapa.addTo(mapa);
+
+        //Legenda gradiente pontos
+        // função cores
+        function getColor(d) {
+            return d > 500 ? '#800026' :
+                d > 400 ? '#BD0026' :
+                    d > 300 ? '#E31A1C' :
+                        d > 200 ? '#FC4E2A' :
+                            d > 100 ? '#FD8D3C' :
+                                d > 50 ? '#FEB24C' :
+                                    d > 20 ? '#FED976' :
+                                        '#FFEDA0';
+        };
+
+        var legend = L.control({ position: 'bottomleft' });
+
+        legend.onAdd = function (mapa) {
+
+            var div = L.DomUtil.create('div', 'info legend'),
+                grades = [0, 20, 50, 100, 200, 300, 400, 500],
+                labels = [];
+
+            // loop through our density intervals and generate a label with a colored square for each interval
+            for (var i = 0; i < grades.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+            }
+
+            return div;
+        };
+
+        legend.addTo(mapa);
+
+
+        let mapa_dia_atual = L.featureGroup().addTo(mapa);
+        let mapa_dia_anterior = L.featureGroup();
+
+        let dias_semana = {
+            "atrasos, horário atual": mapa_dia_atual,
+            "mesmo dia/horário semana passada": mapa_dia_anterior,
+
+        };
+
+        L.control.layers(dias_semana, null, {
+            collapsed: false,
+            position: 'bottomright'
+        }).addTo(mapa);
+
+        //## Gráficos
+
+        //tabela ranqueamento vias
+        let tabela_rank_vias = new Tabulator('#tabela_vias', {
+            height: '100%',
+            layout: 'fitColumns',
+            headerSort: false,
+            columns: [
+                {
+                    title: 'Vias, horário acumul.',
+                    field: 'street',
+                    width: 290
+                }, {
+                    title: 'atraso',
+                    field: 'hexdelay',
+                    width: 80
+                }
+            ]
+        });
+
+
+        //tabela ranqueamento bairros
+        let tabela_rank_bairros = new Tabulator('#tabela_bairros', {
+            height: '100%',
+            layout: 'fitColumns',
+            headerSort: false,
+            columns: [
+                {
+                    title: 'Bairros, horário acumul.',
+                    field: 'street',
+                    width: 290
+                }, {
+                    title: 'atraso',
+                    field: 'hexdelay',
+                    width: 80
+                }
+            ]
+        });
+
+        let atualizar_graficos = () => {
+            $.getJSON("dados_exportados/dados_atualizacao.json", function (dados_atualizacao) {
+                //progressão da semana
+                $.ajax({
+                    type: "GET",
+                    url: "dados_exportados/prog_dia_semana.tsv",
+                    dataType: "text",
+                    success: (prog_dia_semana) => {
+                        let datasets = [
+                            {
+                                label: 'Semana Atual',
+                                backgroundColor: '#0033cc',
+                                data: [],
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Semana Passada',
+                                backgroundColor: '#a6a6a6',
+                                data: [],
+                                yAxisID: 'y1'
+                            }
+                        ];
+
+                        let prog_d_s = prog_dia_semana.split('\n');
+
+                        for (let i = 0; i < prog_d_s.length; i++) {
+                            y = prog_d_s[i].split('\t');
+                            if (y[1] === 'passada') {
+                                datasets[1]['data'].push(parseInt(y[4]));
+                            } else if (y[1] == 'atual') {
+                                datasets[0]['data'].push(parseInt(y[4]));
+                            };
+                        };
+
+                        let data = {
+                            labels: ['Seg.', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sáb.', 'Dom.'],
+                            datasets: datasets
+                        };
+
+                        conjunto_arrays_bar = datasets[1]['data'].concat(datasets[0]['data'])
+
+                        maximo_bar = Math.max(...conjunto_arrays_bar)
+
+                        let myBarChart = new Chart(document.getElementById('prog_dia_semana_canvas'), {
+                            type: 'bar',
+                            data: data,
+                            options: {
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: `Atraso acumulado da semana por dia, até dia ${dados_atualizacao['data']}, ${dados_atualizacao['horario']}hrs`
+                                    }
+                                },
+                                barValueSpacing: 20,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        display: false,
+                                        max: maximo_bar + 20000
+                                    },
+                                    y1: {
+                                        beginAtZero: true,
+                                        display: false,
+                                        max: maximo_bar + 20000
+                                    },
+
+                                }
+                            }
+                        });
+                    }
+                });
+
+                //progressão horas do dia
+                $.ajax({
+                    type: "GET",
+                    url: "dados_exportados/prog_dia.tsv",
+                    dataType: "text",
+                    success: (prog_dia) => {
+                        let datasets = [
+                            {
+                                label: 'Semana Atual',
+                                data: [],
+                                borderColor: '#0033cc',
+                                backgroundColor: '#e6ecff',
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Semana Passada',
+                                data: [],
+                                borderColor: '#a6a6a6',
+                                backgroundColor: '#cccccc',
+                                yAxisID: 'y1'
+                            }
+                        ];
+
+                        let prog_d = prog_dia.split('\n');
+
+                        for (let i = 0; i < prog_d.length; i++) {
+                            y = prog_d[i].split('\t');
+                            if (y[1] === 'passada') {
+                                datasets[1]['data'].push(parseInt(y[3]));
+                            } else if (y[1] == 'atual') {
+                                datasets[0]['data'].push(parseInt(y[3]));
+                            };
+                        };
+
+                        let data = {
+                            labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                                '10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
+                                '20', '20', '22', '23', '24'],
+                            datasets: datasets
+                        };
+
+                        conjunto_arrays = datasets[0]['data'].concat(datasets[1]['data'])
+                        maximo = Math.max(...conjunto_arrays) + 4
+                        minimo = Math.min(...conjunto_arrays) - 4
+
+                        let myBarChart = new Chart(document.getElementById('prog_dia_canvas'), {
+                            type: 'line',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false
+                                },
+                                stacked: false,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: `Atraso acumulado por hora, dias: ${dados_atualizacao['data']} e ${dados_atualizacao['data_anterior']}, ${dados_atualizacao['dia_semana_atual']}, ${dados_atualizacao['horario']}hrs`
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        type: 'linear',
+                                        display: false,
+                                        min: minimo,
+                                        max: maximo
+                                    },
+                                    y1: {
+                                        type: 'linear',
+                                        display: false,
+                                        min: minimo,
+                                        max: maximo,
+                                        grid: {
+                                            drawOnChartArea: false
+                                        },
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+                //tabela ranqueamento vias
+                let tabela_rank_vias_colunas = [{
+                    title: `Vias, acumululado, ${dados_atualizacao['horario']}hrs`,
+                    field: 'street',
+                    width: 290
+                }, {
+                    title: 'atraso',
+                    field: 'hexdelay',
+                    width: 80
+                }];
+
+                tabela_rank_vias.setColumns(tabela_rank_vias_colunas);
+
+                $.ajax({
+                    type: "GET",
+                    url: "dados_exportados/rank_vias_urb.tsv",
+                    dataType: "text",
+                    success: (rank_vias_urb) => {
+
+                        let datasets = []
+
+                        let rank_v = rank_vias_urb.split('\n');
+                        rank_v.shift()
+                        rank_v.pop()
+
+                        for (let i = 0; i < rank_v.length; i++) {
+                            y = rank_v[i].split('\t');
+
+                            datasets.push({
+                                street: y[1],
+                                hexdelay: parseInt(y[2])
+                            });
+                        };
+
+                        tabela_rank_vias.setData(datasets);
+                    }
+                });
+
+                //tabela ranqueamento bairros
+                let tabela_rank_bairros_colunas = [{
+                    title: `Bairros, acumululado, ${dados_atualizacao['horario']}hrs`,
+                    field: 'street',
+                    width: 290
+                }, {
+                    title: 'atraso',
+                    field: 'hexdelay',
+                    width: 80
+                }];
+
+                tabela_rank_bairros.setColumns(tabela_rank_bairros_colunas);
+
+                $.ajax({
+                    type: "GET",
+                    url: "dados_exportados/rank_bairros_urb.tsv",
+                    dataType: "text",
+                    success: (rank_bairros_urb) => {
+
+                        let datasets = []
+
+                        let rank_b = rank_bairros_urb.split('\n');
+                        rank_b.shift()
+                        rank_b.pop()
+
+                        for (let i = 0; i < rank_b.length; i++) {
+                            y = rank_b[i].split('\t');
+
+                            datasets.push({
+                                street: y[1],
+                                hexdelay: parseInt(y[2])
+                            });
+                        };
+
+                        tabela_rank_bairros.setData(datasets);
+                    }
+                });
+
+                //mapa
+                $.getJSON("dados_exportados/mapa.geojson", function (dados_mapa) {
+
+                    uniao_camadas = L.geoJSON(dados_mapa, {
+                        filter: function (feature, layer) {
+                            return feature.properties.dtdate === dados_atualizacao['data'];
+                        },
+                        pointToLayer: function (feature, latlng) {
+                            return L.circleMarker(latlng, {
+                                radius: 8,
+                                stroke: false,
+                                fillOpacity: 0.7,
+                                fillColor: getColor(feature.properties.hexdelay)
+                            });
+                        }
+                    }).addTo(mapa_dia_atual);
+
+                    uniao_camadas = L.geoJSON(dados_mapa, {
+                        filter: function (feature, layer) {
+                            return feature.properties.dtdate === dados_atualizacao['data_anterior'];
+                        },
+                        pointToLayer: function (feature, latlng) {
+                            return L.circleMarker(latlng, {
+                                radius: 8,
+                                stroke: false,
+                                fillOpacity: 0.7,
+                                fillColor: getColor(feature.properties.hexdelay)
+                            });
+                        }
+                    }).addTo(mapa_dia_anterior);
+
+
+                });
+
+            });
+        };
+
+        atualizar_graficos();
+    </script>
+</body>
+
+</html>

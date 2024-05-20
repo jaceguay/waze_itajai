@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard, WAZE, Itajaí - SC</title>
+    <link rel="icon" type="image/png" href="html_imgs/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="html_imgs/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="html_imgs/favicon-32x32.png" sizes="32x32">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script src="js_libs/jquery-3.6.0.min.js"></script>
+    <script src="js_libs/chart.js"></script>
+
+    <style>
+        :root {
+            --base: #00bcd4;
+            --escuro: #333;
+            --claro: white;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        .flex-container0 {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flex-container1 {
+            display: flex;
+            height: 100%;
+            width: 100%;
+        }
+
+        .flex-containerA {
+            display: flex;
+            flex: 2;
+            flex-direction: column;
+            height: 100%;
+            width: 33.33%;
+        }
+
+        .flex-containerA1 {
+            flex: 1;
+            height: 50%;
+            width: 100%;
+        }
+
+        #brasarea {
+            height: 2.5em;
+            display: flex;
+            background: var(--base);
+            color: var(--claro);
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .media {
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            font-size: small;
+            color: #595959;
+        }
+
+        .leaflet-container {
+            background: white;
+        }
+
+        /* Linha horizontal */
+        hr.bordaBranca {
+            border: 2px solid white;
+            border-radius: 1px;
+        }
+
+        /* Legenda */
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+
+        /* Menu drowpdown */
+        .dropbtn {
+            background-color: var(--claro);
+            color: var(--escuro);
+            padding: 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 0;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--escuro);
+            min-width: 400px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            */ z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: var(--claro);
+            padding: 10px 12px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #737373;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: var(--base);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class='flex-container0'>
+        <div id='brasarea'>
+            <span style='vertical-align: middle;'>
+                <div class="dropdown">
+                    <button class="dropbtn">≡ 2.Painel mês - atualização diária</button>
+                    <div class="dropdown-content">
+                        <a href="http://geo-smu/waze/waze_dashboard_dia.html">- 1.Painel dia/semana - atualização cada
+                            hora</a>
+                        <a href="http://geo-smu/waze/waze_dashboard_via.html">- 3.Painel via - atualização diária</a>
+                    </div>
+                </div>
+                <img src='html_imgs/favicon-32x32.png' style='vertical-align: top; height: 25px; padding:3px;'>
+                <span style="font-size:12px">Muncípio de Itajaí</span> |
+                <img src='html_imgs/waze_for_cities_brand.png' style='vertical-align: top; height: 23px; padding:5px;'>
+                <span style="font-size:9px">Data by Waze App. Learn more at Waze.com</span>
+            </span>
+        </div>
+        <div class='flex-container1'>
+            <div class='flex-containerA'>
+                <div class='flex-containerA1'>
+                    <canvas id="AAc"></canvas>
+                    <div id="AA" class="media">
+                        media meses:<br>
+                        aaaa:111
+                    </div>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="ABc"></canvas>
+                    <div id="AB" class="media">
+                        media meses:<br>
+                        aabb:111
+                    </div>
+                </div>
+            </div>
+            <div class='flex-containerA'>
+                <div class='flex-containerA1'>
+                    <canvas id="BAc"></canvas>
+                    <div id="BA" class="media">
+                        media meses:<br>
+                        bbaa:111
+                    </div>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="BBc"></canvas>
+                    <div id="BB" class="media">
+                        media meses:<br>
+                        bbbb:111
+                    </div>
+                </div>
+            </div>
+            <div class='flex-containerA'>
+                <div class='flex-containerA1'>
+                    <canvas id="CAc"></canvas>
+                    <div id="CA" class="media">
+                        media meses:<br>
+                        ccaa:111
+                    </div>
+                </div>
+                <div class='flex-containerA1'>
+                    <canvas id="CBc"></canvas>
+                    <div id="CB" class="media">
+                        media meses:<br>
+                        ccbb:111
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        //## Gráficos
+        let atualizar_graficos = () => {
+            $.ajax({
+                type: "GET",
+                url: "dados_exportados/progressao_m_regioes.tsv",
+                dataType: "text",
+                success: (prog_mes) => {
+
+                    //regiões
+                    //grupo_a = ['Centro', 'Fazenda', 'Vila Operária']
+                    //grupo_b = ['Fazendinha', 'Praia Brava de Itajaí']
+                    //grupo_c = ['Nossa Senhora das Graças', 'Ressacada', 'Dom Bosco', 'Carvalho']
+                    //grupo_d = ['Barra do Rio', 'Cordeiros', 'São João', 'São Judas']
+                    //grupo_e = ['São Vicente', 'Cidade Nova']
+                    //grupo_f = ['demais regiões']
+
+                    let datasets = {};
+
+                    let cores_borda = ['#ff3300', '#9fbfdf', '#ecb3ff'];
+                    let cores_fundo = ['#ffd6cc', '#d9e6f2', '#f9e6ff'];
+
+                    let meses = [];
+                    let regioes = [];
+
+                    let prog_m = prog_mes.split('\n');
+
+                    for (let i = 0; i < prog_m.length; i++) {
+                        y = prog_m[i].split('\t');
+                        if (parseInt(y[1]) && y[0] != 'm_regioes' && y[0].length != 0) {
+                            meses.push(y[3]);
+                            regioes.push(y[0]);
+                        };
+                    };
+
+                    meses = meses.sort().filter(function (item, pos, ary) {
+                        return !pos || item != ary[pos - 1];
+                    });
+
+                    regioes = regioes.sort().filter(function (item, pos, ary) {
+                        return !pos || item != ary[pos - 1];
+                    });
+
+                    for (let i = 0; i < regioes.length; i++) {
+                        datasets[regioes[i]] = []
+                        for (let j = 0; j < meses.length; j++) {
+                            datasets[regioes[i]].push({
+                                label: meses[j],
+                                data: [],
+                                borderColor: cores_borda[j],
+                                backgroundColor: cores_fundo[j],
+                                yAxisID: `y${j}`
+                            });
+                        };
+                    };
+
+                    for (let i = 0; i < prog_m.length; i++) {
+                        y = prog_m[i].split('\t');
+                        if (parseInt(y[1]) && y[0] != 'm_regioes' && y[0].length != 0) {
+                            datasets[[y[0]]][meses.indexOf(y[3])]['data'].push(parseFloat(y[4]))
+                        };
+                    };
+
+                    let criar_graf = (dataset, titulo, nomecanva, min, max) => {
+
+                        let data = {
+                            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+                                16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+                            datasets: dataset
+                        };
+
+                        let myBarChart = new Chart(document.getElementById(nomecanva), {
+                            type: 'line',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false
+                                },
+                                stacked: false,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: titulo
+                                    }
+                                },
+                                elements: {
+                                    line: {
+                                        tension: .2
+                                    }
+                                },
+                                scales: {
+                                    y0: {
+                                        min: min,
+                                        max: max,
+                                    },
+                                    y1: {
+                                        display: false,
+                                        min: min,
+                                        max: max,
+                                    },
+                                    y2: {
+                                        display: false,
+                                        min: min,
+                                        max: max,
+                                    }
+                                }
+                            }
+                        });
+
+                    };
+
+                    mapa_ids = ['AA', 'AB', 'BA', 'BB', 'CA', 'CB']
+                    $.ajax({
+                        type: "GET",
+                        url: "dados_exportados/regioes_mes_valores.json",
+                        dataType: "json",
+                        success: (medias_mes) => {
+                            for (let i = 0; i < mapa_ids.length; i++) {
+
+                                nome_regiao = medias_mes[i]['regiao']
+
+                                let medias_html = 'médias:<br>| '
+                                for (let [key, value] of Object.entries(medias_mes[i]['meses'])) {
+                                    medias_html = medias_html + value + ' | '
+                                }
+                                document.getElementById(mapa_ids[i]).innerHTML = medias_html
+
+                                canva_graf = `${mapa_ids[i]}c`
+
+                                conjunto_arrays = datasets[nome_regiao][0]['data']
+                                    .concat(datasets[nome_regiao][1]['data'])
+                                    .concat(datasets[nome_regiao][2]['data'])
+
+
+                                maximo = Math.max(...conjunto_arrays) + 4
+                                minimo = Math.min(...conjunto_arrays) - 4
+
+                                criar_graf(datasets[nome_regiao], nome_regiao, canva_graf, minimo, maximo);
+
+                            };
+                        }
+                    });
+
+
+
+
+                }
+            });
+        };
+
+        atualizar_graficos();
+    </script>
+</body>
+
+</html>
